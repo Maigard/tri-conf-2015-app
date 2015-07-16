@@ -55,6 +55,7 @@ export default Ember.Controller.extend({
     var str = this.get('searchString').toLowerCase();
     var selectedTrack = this.get('selectedTrack.name');
     var selectedVenue = this.get('selectedLocation.venue');
+    var now = new Date();
     this.model.events.forEach(function(event){
       var title = (event.get('title') || "").toLowerCase();
       var speaker = (event.get('speaker') || "").toLowerCase();
@@ -63,15 +64,17 @@ export default Ember.Controller.extend({
       var locationVenue = event.get('location.venue');
       var eventInSelectedTrack = trackName === selectedTrack || selectedTrack === "All Tracks";
       var eventInSelectedLocation = locationVenue === selectedVenue || selectedVenue === "All Venues";
+      var eventExpired = event.get('date') < now;
+      console.log('event expired', event.get('title'), eventExpired);
       var eventInSearch = str === "" || title.indexOf(str) > -1 ||
           speaker.indexOf(str) > -1 || description.indexOf(str) > -1;
-      if(eventInSelectedTrack && eventInSearch && eventInSelectedLocation) {
+      if(eventInSelectedTrack && eventInSearch && eventInSelectedLocation && !eventExpired) {
         event.set('isHidden', false);
       } else {
         event.set('isHidden', true);
       }
     });
-  }.observes("selectedLocation", "selectedTrack", "searchString"),
+  }.observes("selectedLocation", "selectedTrack", "searchString", "clock.five"),
 
 	actions : {
     checkIn : function(event){
