@@ -54,5 +54,9 @@ module.exports = function(environment) {
 
   }
 
+  if(environment == 'trifi') {
+    ENV.firebase = 'https://trifi.firebaseio.com/';
+  }
+
   return ENV;
 };
